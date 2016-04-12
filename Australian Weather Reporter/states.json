@@ -1,0 +1,51 @@
+[ {
+  "name" : "Australia's Antarctic Bases",
+  "latestURL" : null,
+  "stations" : [ ],
+  "dwourl" : "http://www.bom.gov.au/climate/dwo/IDCJDW0920.shtml"
+}, {
+  "name" : "Australia's Offshore Islands",
+  "latestURL" : null,
+  "stations" : [ ],
+  "dwourl" : "http://www.bom.gov.au/climate/dwo/IDCJDW0940.shtml"
+}, {
+  "name" : "Australian Capital Territory",
+  "latestURL" : null,
+  "stations" : [ ],
+  "dwourl" : "http://www.bom.gov.au/climate/dwo/IDCJDW0100.shtml"
+}, {
+  "name" : "New South Wales",
+  "latestURL" : null,
+  "stations" : [ ],
+  "dwourl" : "http://www.bom.gov.au/climate/dwo/IDCJDW0200.shtml"
+}, {
+  "name" : "Northern Territory",
+  "latestURL" : null,
+  "stations" : [ ],
+  "dwourl" : "http://www.bom.gov.au/climate/dwo/IDCJDW0800.shtml"
+}, {
+  "name" : "Queensland",
+  "latestURL" : null,
+  "stations" : [ ],
+  "dwourl" : "http://www.bom.gov.au/climate/dwo/IDCJDW0400.shtml"
+}, {
+  "name" : "South Australia",
+  "latestURL" : null,
+  "stations" : [ ],
+  "dwourl" : "http://www.bom.gov.au/climate/dwo/IDCJDW0500.shtml"
+}, {
+  "name" : "Tasmania",
+  "latestURL" : null,
+  "stations" : [ ],
+  "dwourl" : "http://www.bom.gov.au/climate/dwo/IDCJDW0700.shtml"
+}, {
+  "name" : "Victoria",
+  "latestURL" : null,
+  "stations" : [ ],
+  "dwourl" : "http://www.bom.gov.au/climate/dwo/IDCJDW0300.shtml"
+}, {
+  "name" : "Western Australia",
+  "latestURL" : null,
+  "stations" : [ ],
+  "dwourl" : "http://www.bom.gov.au/climate/dwo/IDCJDW0600.shtml"
+} ]
