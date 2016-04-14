@@ -1,65 +1,85 @@
 package main;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.TreeSet;
 
-import scraper.Scraper;
+import data.Backup;
+import data.Data;
+import data.State;
+import data.Station;
+
 //TODO Class should quite possibly have static methods.
-public class Control implements Runnable {
-	public static int favouriteNum;
-	private File stationStorage = new File("StationData.txt");
-	private PrintWriter writer;
-	private Station[] favouriteStations= new Station[favouriteNum];
-	private BufferedReader reader;
+public class Control implements Runnable{
+	private TreeSet<Station> favouriteStations;
+	private Data data;
 	
 	
-	public Control() throws IOException {
-		writer= new PrintWriter(new BufferedWriter(new FileWriter(stationStorage))); //Throws IOException, perhaps should be handled here rather than propagating out the method
-		BufferedReader reader=new BufferedReader(new FileReader(stationStorage));
+	public Control() {
+		favouriteStations=Backup.getJSONFavourites();
 	}
-	public void run()
+	public static void main(String[] args)
 	{
-		loadFromFile();
-		//Stuff and things
-		printToFile();
-	}
-	public static void printToFile()
-	{
+		Control program = new Control();
+		Thread backgroundProgram = new Thread(program);
+		backgroundProgram.run();
+		Backup.writeJSONFavourites(program.getFavouriteStations());
 		
 	}
-	
-	public static void loadFromFile()
+	public void refresh()
 	{
-		
+		data = Data.GetInstance();
+		//TODO Update favourite station data from data
 	}
 
-	public boolean addToFavourites(Station newStation){ //Add a station to the list of favourite stations
-		for (int i=0;i<favouriteNum;i++)
+	public TreeSet<Station> getStations(String stateName)
+	{//Takes a String State name and returns the stations associated with that State	
+		TreeSet<Station> stationList=null;
+		TreeSet<State> stateList=data.getStates();
+		Iterator<State> iterator=stateList.iterator();
+		while (iterator.hasNext())
 		{
-			//Loop through the list of stations and add the new station to the most recent station
-			if (favouriteStations[i]==null)
+			State currentState =iterator.next();
+			if (currentState.getName().equals(stateName))
 			{
-				favouriteStations[i]=newStation; 
-				return true;
+				stationList=currentState.getStations();
 			}
 		}
-		//The station list is full
-		return false;
+		return stationList;
+	}
+	public TreeSet<Station> getStations(State state)
+	{//returns a station list of an associated given state TODO probably unnecessary
+		TreeSet<Station> stationList=null;
+		stationList=state.getStations();
+		return stationList;
+	}
+
+	public void addToFavourites(Station newStation) //Add a station to the list of favourite stations
+	{
+		favouriteStations.add(newStation);
 	}
 	
-	public void removeFromFavourites(int n){// Remove the 
-		favouriteStations[n]=null;
+	public void removeFromFavourites(Station remStation){// Remove the given station from the list of stations
+		favouriteStations.remove(remStation);
 	}
-	public Station[] getFavouriteStations() {
+	public TreeSet<Station> getFavouriteStations() {
 		return favouriteStations;
 	}
-	public void setFavouriteStations(Station[] favouriteStations) {
+	public void setFavouriteStations(TreeSet<Station> favouriteStations) {
 		this.favouriteStations = favouriteStations;
-	};
+	}
+	@Override
+	public void run() {//Thread automatically the data every half hour
+		try 
+		{
+			while(true)
+			{
+				this.refresh();
+				Thread.sleep(1800000);
+			}
+		} catch (InterruptedException e) 
+		{
+		e.printStackTrace();
+		}		
+	}
 
 }
