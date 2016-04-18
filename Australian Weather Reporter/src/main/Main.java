@@ -23,11 +23,17 @@ public class Main
 		printStates(states);
 		
 		/*System.out.println();
+
 		printTables(data.getDWOStationData(states.first().getStations().first(), 0));
 		
 		System.out.println();
-		printTables(data.getLatestStationData(states.first().getStations().first(), 0));*/
+		printTables(data.getLatestStationData(states.first().getStations().first(), 0));
+
+		printTable(data.getDWOStationData(states.first().getStations().first(), 0));
 		
+		System.out.println();
+		printTable(data.getLatestStationData(states.first().getStations().first(), 0));*/
+
 		double timeDiff = ((double)(System.nanoTime() - startTime) / Math.pow(10, 9));
 		String time = String.format("%f", timeDiff);
 		System.out.println("\n" + time + " seconds");
@@ -48,7 +54,11 @@ public class Main
 		}
 	}
 	
+<<<<<<< HEAD
 	public static void printTables(ArrayList<ArrayList<String>> rows)
+=======
+	public static void printTable(ArrayList<ArrayList<String>> rows)
+>>>>>>> branch 'NathanN' of https://github.com/Nathan6723/SEPT
 	{
 		Iterator<ArrayList<String>> iterAr = rows.iterator();
 		while (iterAr.hasNext())
