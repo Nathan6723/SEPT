@@ -33,7 +33,7 @@ public class Main
 		String time = String.format("%f", timeDiff);
 		System.out.println("\n" + time + " seconds");
 	}
-	
+
 	public static void printStates(TreeSet<State> states)
 	{
 		boolean first = true;
