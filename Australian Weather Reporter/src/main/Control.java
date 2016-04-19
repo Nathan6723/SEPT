@@ -10,8 +10,8 @@ import data.Station;
 
 //TODO Class should quite possibly have static methods.
 public class Control implements Runnable{
-	private TreeSet<Station> favouriteStations;
-	private Data data;
+	static private TreeSet<Station> favouriteStations;
+	static private Data data;
 	
 	
 	public Control() {
@@ -22,14 +22,21 @@ public class Control implements Runnable{
 		Control program = new Control();
 		Thread backgroundProgram = new Thread(program);
 		backgroundProgram.run();
+		boolean quit=false;
+		while(quit==false)
+		{
+			//TODO draw GUI
+			//quit=drawGUI();
+		}
 		Backup.writeJSONFavourites(program.getFavouriteStations());
 		
 	}
 	public void refresh()
 	{
+		//TODO update data instance?
 		data = Data.GetInstance();
 		// Updates favouriteStations from data
-		// Implemented by iterating through all three tree sets. Very inefficient could be better?
+		// Implemented by iterating through all three tree sets. Very inefficient could be better? -Michael
 		Iterator<State> stateIterator = data.getStates().iterator();
 		Iterator<Station> stationIterator;
 		Iterator<Station> favIterator = favouriteStations.iterator();
@@ -50,16 +57,15 @@ public class Control implements Runnable{
 					}
 				}
 			}
-			
 		}
 	}
 	
-	public void drawGraph()
+	static public void drawGraph(Station graphStation)
 	{
 		//TODO, needs graph class to exist
 	}
 
-	public TreeSet<Station> getStations(String stateName)
+	static public TreeSet<Station> getStations(String stateName)
 	{//Takes a String State name and returns the stations associated with that State	
 		TreeSet<Station> stationList=null;
 		TreeSet<State> stateList=data.getStates();
@@ -74,29 +80,29 @@ public class Control implements Runnable{
 		}
 		return stationList;
 	}
-	public TreeSet<Station> getStations(State state)
+	static public TreeSet<Station> getStations(State state)
 	{//returns a station list of an associated given state TODO probably unnecessary
 		TreeSet<Station> stationList=null;
 		stationList=state.getStations();
 		return stationList;
 	}
 
-	public void addToFavourites(Station newStation) //Add a station to the list of favourite stations
+	static public void addToFavourites(Station newStation) //Add a station to the list of favourite stations
 	{
 		favouriteStations.add(newStation);
 	}
 	
-	public void removeFromFavourites(Station remStation){// Remove the given station from the list of stations
+	static public void removeFromFavourites(Station remStation){// Remove the given station from the list of stations
 		favouriteStations.remove(remStation);
 	}
-	public TreeSet<Station> getFavouriteStations() {
+	static public TreeSet<Station> getFavouriteStations() {
 		return favouriteStations;
 	}
-	public void setFavouriteStations(TreeSet<Station> favouriteStations) {
-		this.favouriteStations = favouriteStations;
+	static public void setFavouriteStations(TreeSet<Station> favouriteStations) {
+		Control.favouriteStations = favouriteStations;
 	}
 	@Override
-	public void run() {//Thread automatically the data every half hour
+	public void run() {//Thread automatically refreshes the data every half hour
 		try 
 		{
 			while(true)
