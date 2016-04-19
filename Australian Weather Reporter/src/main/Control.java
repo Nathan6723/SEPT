@@ -28,10 +28,28 @@ public class Control implements Runnable{
 	public void refresh()
 	{
 		data = Data.GetInstance();
-		//TODO update data
+		// Updates favouriteStations from data
+		// Implemented by iterating through all three tree sets. Very inefficient could be better?
 		Iterator<State> stateIterator = data.getStates().iterator();
+		Iterator<Station> stationIterator;
+		Iterator<Station> favIterator = favouriteStations.iterator();
 		while (stateIterator.hasNext())
 		{
+			State currentState = stateIterator.next();
+			stationIterator = currentState.getStations().iterator();
+			while (stationIterator.hasNext())
+			{
+				Station currentStation=stationIterator.next();
+				while(favIterator.hasNext())
+				{
+					Station currentFav = favIterator.next();
+					if (currentStation.getName().equals(currentFav.getName()))
+					{
+						removeFromFavourites(currentFav);
+						addToFavourites(currentStation);
+					}
+				}
+			}
 			
 		}
 	}
