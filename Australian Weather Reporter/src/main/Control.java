@@ -28,7 +28,17 @@ public class Control implements Runnable{
 	public void refresh()
 	{
 		data = Data.GetInstance();
-		//TODO Update favourite station data from data
+		//TODO update data
+		Iterator<State> stateIterator = data.getStates().iterator();
+		while (stateIterator.hasNext())
+		{
+			
+		}
+	}
+	
+	public void drawGraph()
+	{
+		//TODO, needs graph class to exist
 	}
 
 	public TreeSet<Station> getStations(String stateName)
