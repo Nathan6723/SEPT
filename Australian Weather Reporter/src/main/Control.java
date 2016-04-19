@@ -1,5 +1,7 @@
 package main;
 
+import gui.Frame1;
+
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -25,7 +27,8 @@ public class Control implements Runnable{
 		boolean quit=false;
 		while(quit==false)
 		{
-			//TODO draw GUI
+			Frame1 frame = new Frame1();
+			frame.mainFrame();
 			//quit=drawGUI();
 		}
 		Backup.writeJSONFavourites(program.getFavouriteStations());
