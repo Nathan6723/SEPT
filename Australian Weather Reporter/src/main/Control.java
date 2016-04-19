@@ -17,21 +17,22 @@ public class Control implements Runnable{
 	
 	
 	public Control() {
-		favouriteStations=Backup.getJSONFavourites();
+		//favouriteStations=Backup.getJSONFavourites(); //TODO BROKEN
 	}
 	public static void main(String[] args)
 	{
-		Control program = new Control();
+		/* TODO Control program = new Control();
 		Thread backgroundProgram = new Thread(program);
-		backgroundProgram.run();
+		backgroundProgram.run();*/
 		boolean quit=false;
 		while(quit==false)
 		{
 			Frame1 frame = new Frame1();
 			frame.mainFrame();
 			//quit=drawGUI();
+			quit=true;
 		}
-		Backup.writeJSONFavourites(program.getFavouriteStations());
+		//TODO Backup.writeJSONFavourites(program.getFavouriteStations());
 		
 	}
 	public void refresh()
@@ -110,7 +111,7 @@ public class Control implements Runnable{
 		{
 			while(true)
 			{
-				this.refresh();
+				//this.refresh(); //CAUSES CRASH
 				Thread.sleep(1800000);
 			}
 		} catch (InterruptedException e) 

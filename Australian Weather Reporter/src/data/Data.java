@@ -65,12 +65,12 @@ public class Data
 			}
 			for (Element stationLink : stationLinks)
 			{
-				Station station = new Station(stationRows.get(0).getElementsByTag("th").text());
-				ArrayList<Element> monthLinks = stationRow.getElementsByTag("td");
-				for (Element monthLink : monthLinks)
+				//Station station = new Station(stationRows.get(0).getElementsByTag("th").text());
+				//ArrayList<Element> monthLinks = stationRow.getElementsByTag("td");
+				//for (Element monthLink : monthLinks)
 				{
-					station.addDWOURL(BOMURL + monthLink.attr("href"));
-					state.addStation(station);
+				//	station.addDWOURL(BOMURL + monthLink.attr("href"));
+				//	state.addStation(station);
 				}
 			}
 			states.add(state);
@@ -118,7 +118,7 @@ public class Data
 	
 	public ArrayList<ArrayList<String>> getDWOStationData(Station station, int month)
 	{
-		return scraper.getTableData(station.getDWOURLs(), 0);
+		return null; //scraper.getTableData(station.getDWOURLs(), 0);
 	}
 	
 	public ArrayList<ArrayList<String>> getLatestStationData(Station station, int day)
