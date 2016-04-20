@@ -13,17 +13,17 @@ import data.Station;
 //TODO Class should quite possibly have static methods.
 public class Control implements Runnable{
 	static private TreeSet<Station> favouriteStations;
-	static private Data data;
+	static private Data data = Data.GetInstance();
 	
 	
 	public Control() {
-		//favouriteStations=Backup.getJSONFavourites(); //TODO BROKEN
+		favouriteStations=Backup.getJSONFavourites(); //TODO BROKEN
 	}
 	public static void main(String[] args)
 	{
-		/* TODO Control program = new Control();
+		Control program = new Control();
 		Thread backgroundProgram = new Thread(program);
-		backgroundProgram.run();*/
+		backgroundProgram.run();
 		boolean quit=false;
 		while(quit==false)
 		{
@@ -32,13 +32,11 @@ public class Control implements Runnable{
 			//quit=drawGUI();
 			quit=true;
 		}
-		//TODO Backup.writeJSONFavourites(program.getFavouriteStations());
+		Backup.writeJSONFavourites(program.getFavouriteStations());
 		
 	}
 	public void refresh()
 	{
-		//TODO update data instance?
-		data = Data.GetInstance();
 		// Updates favouriteStations from data
 		// Implemented by iterating through all three tree sets. Very inefficient could be better? -Michael
 		Iterator<State> stateIterator = data.getStates().iterator();
@@ -111,7 +109,7 @@ public class Control implements Runnable{
 		{
 			while(true)
 			{
-				//this.refresh(); //CAUSES CRASH
+				this.refresh();
 				Thread.sleep(1800000);
 			}
 		} catch (InterruptedException e) 

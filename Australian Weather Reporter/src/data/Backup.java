@@ -70,7 +70,7 @@ public class Backup
 		}
 	}
 	public static TreeSet<Station> getJSONFavourites()
-	{//// This is based upon the above method. I'm not familiar with JSON objects, so I assume it works. TODO needs testing -Michael
+	{// This is based upon the above method. I'm not familiar with JSON objects, so I assume it works. TODO needs testing -Michael
 		try
 		{
 			Path path = Paths.get(FAVOURITESFILENAME);
