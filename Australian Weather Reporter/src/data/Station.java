@@ -1,16 +1,17 @@
 package data;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeSet;
 
 public class Station implements Comparable<Station>
 {
 	private String name;
-	private HashSet<String> dwoURLs;
 	private String latestURL;
 	
-	public TreeSet<Table> DWOTables;
-	public TreeSet<Table> LatestTables;
+	private ArrayList<String> dwoURLs = new ArrayList<>();
+	public TreeSet<Table> DWOTables = new TreeSet<Table>();
+	public TreeSet<Table> LatestTables = new TreeSet<Table>();
 	
 	public Station () {}
 	
@@ -24,7 +25,7 @@ public class Station implements Comparable<Station>
 		return name;
 	}
 	
-	public HashSet<String> getDWOURLs()
+	public ArrayList<String> getDWOURLs()
 	{
 		return dwoURLs;
 	}

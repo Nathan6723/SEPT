@@ -14,8 +14,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class Backup
 {
-	private final static String STATESFILENAME = "states.json";
-	private final static String FAVOURITESFILENAME = "FavStations.json";
+	private final static String STATESFILENAME = "States.json";
+	private final static String FAVOURITESFILENAME = "Favourite Stations.json";
 	
 	public void writeJSONObject(TreeSet<State> states)
 	{
@@ -47,6 +47,7 @@ public class Backup
 			e.printStackTrace();
 		}
 	}
+	
 	
 	public TreeSet<State> getJSONObject()
 	{
@@ -80,6 +81,7 @@ public class Backup
 				return null;
 			ObjectMapper mapper = new ObjectMapper();
 			JavaType type = mapper.getTypeFactory().constructCollectionType(TreeSet.class, Station.class);
+
 			return mapper.readValue(json, type);
 		}
 		catch (Exception e)
