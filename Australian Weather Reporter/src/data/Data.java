@@ -1,6 +1,8 @@
 package data;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -56,22 +58,28 @@ public class Data
 			State state = new State(stateLink.text());
 			String link = DWOURL + stateLink.attr("href");
 			state.setDWOURL(link);
-			ArrayList<Element> stationLinks = scraper.getLinksFromTag(link, "td");
+			ArrayList<Element> stationLinks = scraper.getLinksFromTag(link, "th");
 			if (stationLinks.size() == 0)
 			{
 				ArrayList<Element> categories = scraper.getLinksFromTag(link, "h2");
 				for (Element category : categories)
-					stationLinks.addAll(scraper.getLinksFromTag(BOMURL + category.attr("href"), "td"));
+					stationLinks.addAll(scraper.getLinksFromTag(BOMURL + category.attr("href"), "th"));
 			}
 			for (Element stationLink : stationLinks)
 			{
-				Station station = new Station(stationRows.get(0).getElementsByTag("th").text());
-				ArrayList<Element> monthLinks = stationRow.getElementsByTag("td");
-				for (Element monthLink : monthLinks)
+				Station station = new Station(stationLink.text());
+				String id = stationLink.attr("href");
+				id = id.substring(id.indexOf("IDCJDW"), id.indexOf("latest") - 1);
+				Calendar calendar = Calendar.getInstance();
+				for (int i = 0; i < 6; ++i)
 				{
-					station.addDWOURL(BOMURL + monthLink.attr("href"));
-					state.addStation(station);
+					int month = calendar.get(Calendar.MONTH) + 1;
+					int year = calendar.get(Calendar.YEAR);
+					String date = "" + year + (month < 10 ? "0" : "") + month;
+					link = DWOURL + date + "/html/" + id + "." + date + ".shtml";
+					station.addDWOURL(link);
 				}
+				state.addStation(station);
 			}
 			states.add(state);
 		}
@@ -118,7 +126,7 @@ public class Data
 	
 	public ArrayList<ArrayList<String>> getDWOStationData(Station station, int month)
 	{
-		return scraper.getTableData(station.getDWOURLs(), 0);
+		return scraper.getTableData(station.getDWOURLs().get(month), 0);
 	}
 	
 	public ArrayList<ArrayList<String>> getLatestStationData(Station station, int day)

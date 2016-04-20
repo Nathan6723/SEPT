@@ -14,8 +14,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class Backup
 {
-	private final static String STATESFILENAME = "states.json";
-	private final static String FAVOURITESFILENAME = "FavStations.json";
+	private final static String STATESFILENAME = "States.json";
+	private final static String FAVOURITESFILENAME = "Favourite Stations.json";
 	
 	public void writeJSONObject(TreeSet<State> states)
 	{

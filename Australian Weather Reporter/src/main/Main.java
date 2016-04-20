@@ -20,14 +20,11 @@ public class Main
 		//if (states == null)
 		TreeSet<State> states = data.getStates();
 		
-		printStates(states);
-		
-		/*System.out.println();
-
-		printTable(data.getDWOStationData(states.first().getStations().first(), 0));
+		//printStates(states);
 		
 		System.out.println();
-		printTable(data.getLatestStationData(states.first().getStations().first(), 0));*/
+
+		printTable(data.getDWOStationData(states.first().getStations().first(), 0));
 
 		double timeDiff = ((double)(System.nanoTime() - startTime) / Math.pow(10, 9));
 		String time = String.format("%f", timeDiff);

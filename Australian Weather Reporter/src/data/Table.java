@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Table implements Comparable<Table>
 {
 	private int index;
-	private ArrayList<ArrayList<String>> rows;
+	private ArrayList<ArrayList<String>> rows = new ArrayList<>();
 	
 	public Table() {}
 	
