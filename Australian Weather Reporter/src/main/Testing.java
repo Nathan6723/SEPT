@@ -8,11 +8,12 @@ import data.Data;
 import data.State;
 import data.Station;
 
-public class Main
+public class Testing
 {
 	public static void main(String[] args)
 	{
 		long startTime = System.nanoTime();
+		
 		Data data = Data.GetInstance();
 		
 		//TreeSet<State> states = data.getStatesBackup();

@@ -1,5 +1,7 @@
 package main;
 
+import gui.Frame1;
+
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -10,28 +12,64 @@ import data.Station;
 
 //TODO Class should quite possibly have static methods.
 public class Control implements Runnable{
-	private TreeSet<Station> favouriteStations;
-	private Data data;
+	static private TreeSet<Station> favouriteStations;
+	static private Data data;
 	
 	
 	public Control() {
-		favouriteStations=Backup.getJSONFavourites();
+		//favouriteStations=Backup.getJSONFavourites(); //TODO BROKEN
 	}
 	public static void main(String[] args)
 	{
-		Control program = new Control();
+		/* TODO Control program = new Control();
 		Thread backgroundProgram = new Thread(program);
-		backgroundProgram.run();
-		Backup.writeJSONFavourites(program.getFavouriteStations());
+		backgroundProgram.run();*/
+		boolean quit=false;
+		while(quit==false)
+		{
+			Frame1 frame = new Frame1();
+			frame.mainFrame();
+			//quit=drawGUI();
+			quit=true;
+		}
+		//TODO Backup.writeJSONFavourites(program.getFavouriteStations());
 		
 	}
 	public void refresh()
 	{
+		//TODO update data instance?
 		data = Data.GetInstance();
-		//TODO Update favourite station data from data
+		// Updates favouriteStations from data
+		// Implemented by iterating through all three tree sets. Very inefficient could be better? -Michael
+		Iterator<State> stateIterator = data.getStates().iterator();
+		Iterator<Station> stationIterator;
+		Iterator<Station> favIterator = favouriteStations.iterator();
+		while (stateIterator.hasNext())
+		{
+			State currentState = stateIterator.next();
+			stationIterator = currentState.getStations().iterator();
+			while (stationIterator.hasNext())
+			{
+				Station currentStation=stationIterator.next();
+				while(favIterator.hasNext())
+				{
+					Station currentFav = favIterator.next();
+					if (currentStation.getName().equals(currentFav.getName()))
+					{
+						removeFromFavourites(currentFav);
+						addToFavourites(currentStation);
+					}
+				}
+			}
+		}
+	}
+	
+	static public void drawGraph(Station graphStation)
+	{
+		//TODO, needs graph class to exist
 	}
 
-	public TreeSet<Station> getStations(String stateName)
+	static public TreeSet<Station> getStations(String stateName)
 	{//Takes a String State name and returns the stations associated with that State	
 		TreeSet<Station> stationList=null;
 		TreeSet<State> stateList=data.getStates();
@@ -46,34 +84,34 @@ public class Control implements Runnable{
 		}
 		return stationList;
 	}
-	public TreeSet<Station> getStations(State state)
+	static public TreeSet<Station> getStations(State state)
 	{//returns a station list of an associated given state TODO probably unnecessary
 		TreeSet<Station> stationList=null;
 		stationList=state.getStations();
 		return stationList;
 	}
 
-	public void addToFavourites(Station newStation) //Add a station to the list of favourite stations
+	static public void addToFavourites(Station newStation) //Add a station to the list of favourite stations
 	{
 		favouriteStations.add(newStation);
 	}
 	
-	public void removeFromFavourites(Station remStation){// Remove the given station from the list of stations
+	static public void removeFromFavourites(Station remStation){// Remove the given station from the list of stations
 		favouriteStations.remove(remStation);
 	}
-	public TreeSet<Station> getFavouriteStations() {
+	static public TreeSet<Station> getFavouriteStations() {
 		return favouriteStations;
 	}
-	public void setFavouriteStations(TreeSet<Station> favouriteStations) {
-		this.favouriteStations = favouriteStations;
+	static public void setFavouriteStations(TreeSet<Station> favouriteStations) {
+		Control.favouriteStations = favouriteStations;
 	}
 	@Override
-	public void run() {//Thread automatically the data every half hour
+	public void run() {//Thread automatically refreshes the data every half hour
 		try 
 		{
 			while(true)
 			{
-				this.refresh();
+				//this.refresh(); //CAUSES CRASH
 				Thread.sleep(1800000);
 			}
 		} catch (InterruptedException e) 
