@@ -2,7 +2,6 @@ package data;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -20,30 +19,52 @@ public class Data
 	private Backup backup = new Backup();
 	private Scraper scraper = new Scraper();
 	
+	private boolean gettingStates;
 	private TreeSet<State> states = new TreeSet<>();
+	private TreeSet<State> favourites = new TreeSet<>();
 	
-	private static Data instance;
-	
-	private Data() {}
-	
-	public static Data GetInstance()
+	public TreeSet<State> getFavourites()
 	{
-		if (instance == null)
-			instance = new Data();
-		return instance;
+		return favourites;
+	}
+	
+	public boolean isGettingStates()
+	{
+		return gettingStates;
+	}
+	
+	public TreeSet<State> getFavouritesBackup()
+	{
+		TreeSet<State> favouritesBackup = backup.getFavouritesBackup();
+		if (favouritesBackup == null)
+			return null;
+		else
+			return favourites = favouritesBackup;
+	}
+	
+	public void backupFavourites()
+	{
+		backup.writeFavouritesBackup(favourites);
 	}
 	
 	public TreeSet<State> getStates()
 	{
+		return states;
+	}
+	
+	public TreeSet<State> getStatesUpdate()
+	{
+		gettingStates = true;
 		getDWOStationNames();
 		//getLatestStationNames();
-		backup.writeJSONObject(states);
+		backup.writeStatesBackup(states);
+		gettingStates = false;
 		return states;
 	}
 	
 	public TreeSet<State> getStatesBackup()
 	{
-		TreeSet<State> statesBackup = backup.getJSONObject();
+		TreeSet<State> statesBackup = backup.getStatesBackup();
 		if (statesBackup == null)
 			return null;
 		else
@@ -85,6 +106,7 @@ public class Data
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void getLatestStationNames()
 	{
 		for (int i = 0; i < STATES.length; ++i)
@@ -122,6 +144,26 @@ public class Data
 			}
 			states.add(state);
 		}
+	}
+	
+	public Station getStation(TreeSet<State> searchStates, String stateName, String stationName)
+	{
+		Iterator<State> iterState = searchStates.iterator();
+		while (iterState.hasNext())
+		{
+			State state = iterState.next();
+			if (state.getName().equals(stateName))
+			{
+				Iterator<Station> iterStation = state.getStations().iterator();
+				while (iterStation.hasNext())
+				{
+					Station station = iterStation.next();
+					if (station.getName().equals(stationName))
+						return station;
+				}
+			}
+		}
+		return null;
 	}
 	
 	public ArrayList<ArrayList<String>> getDWOStationData(Station station, int month)
