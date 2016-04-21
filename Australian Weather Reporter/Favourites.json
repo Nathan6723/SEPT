@@ -1,0 +1,29 @@
+[ {
+  "name" : "New South Wales",
+  "latestURL" : null,
+  "stations" : [ {
+    "name" : "Armidale",
+    "latestURL" : null,
+    "DWOTables" : [ ],
+    "LatestTables" : [ ],
+    "dwourls" : [ ]
+  }, {
+    "name" : "Coonamble",
+    "latestURL" : null,
+    "DWOTables" : [ ],
+    "LatestTables" : [ ],
+    "dwourls" : [ ]
+  } ],
+  "dwourl" : null
+}, {
+  "name" : "Tasmania",
+  "latestURL" : null,
+  "stations" : [ {
+    "name" : "Butlers Gorge",
+    "latestURL" : null,
+    "DWOTables" : [ ],
+    "LatestTables" : [ ],
+    "dwourls" : [ ]
+  } ],
+  "dwourl" : null
+} ]

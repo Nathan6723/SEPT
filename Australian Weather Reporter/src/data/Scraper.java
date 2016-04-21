@@ -40,7 +40,10 @@ public class Scraper
 	public ArrayList<ArrayList<String>> getTableData(String url, int tableNum)
 	{
 		Document doc = Connect(url);
-		Elements rows = doc.getElementsByTag("tbody").get(tableNum).getElementsByTag("tr");
+		Elements tableBody = doc.getElementsByTag("tbody");
+		if (tableBody.size() == 0)
+			return null;
+		Elements rows = tableBody.get(tableNum).getElementsByTag("tr");
 		ArrayList<ArrayList<String>> dataAr = new ArrayList<ArrayList<String>>();
 		for (Element row : rows)
 		{

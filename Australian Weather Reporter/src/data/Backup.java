@@ -1,8 +1,6 @@
 package data;
 
-import java.io.File;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,16 +12,26 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class Backup
 {
-	private final static String STATESFILENAME = "States.json";
-	private final static String FAVOURITESFILENAME = "Favourite Stations.json";
+	private final static String STATES_FILENAME = "States.json";
+	private final static String FAVOURITES_FILENAME = "Favourites.json";
 	
-	public void writeJSONObject(TreeSet<State> states)
+	public void writeStatesBackup(TreeSet<State> states)
+	{
+		writeJSONObject(states, STATES_FILENAME);
+	}
+	
+	public void writeFavouritesBackup(TreeSet<State> states)
+	{
+		writeJSONObject(states, FAVOURITES_FILENAME);
+	}
+	
+	private void writeJSONObject(Object object, String filename)
 	{
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		try
 		{
-			String json = ow.writeValueAsString(states);
-			PrintWriter pw = new PrintWriter(STATESFILENAME);
+			String json = ow.writeValueAsString(object);
+			PrintWriter pw = new PrintWriter(filename);
 			pw.print(json);
 			pw.close();
 		}
@@ -32,28 +40,22 @@ public class Backup
 			e.printStackTrace();
 		}
 	}
-	public static void writeJSONFavourites(TreeSet<Station> favouriteStations)
-	{// This is based upon the above method. I'm not familiar with JSON objects, so I assume it works. TODO needs testing -Michael
-		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-		try
-		{
-			String json = ow.writeValueAsString(favouriteStations);
-			PrintWriter pw = new PrintWriter(FAVOURITESFILENAME);
-			pw.print(json);
-			pw.close();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+	
+	public TreeSet<State> getStatesBackup()
+	{
+		return getStatesBackup(STATES_FILENAME);
 	}
 	
+	public TreeSet<State> getFavouritesBackup()
+	{
+		return getStatesBackup(FAVOURITES_FILENAME);
+	}
 	
-	public TreeSet<State> getJSONObject()
+	private <T> T getStatesBackup(String filename)
 	{
 		try
 		{
-			Path path = Paths.get(STATESFILENAME);
+			Path path = Paths.get(filename);
 			if (!Files.exists(path))
 				return null;
 			String json = new String(Files.readAllBytes(path));
@@ -61,27 +63,6 @@ public class Backup
 				return null;
 			ObjectMapper mapper = new ObjectMapper();
 			JavaType type = mapper.getTypeFactory().constructCollectionType(TreeSet.class, State.class);
-			return mapper.readValue(json, type);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-	}
-	public static TreeSet<Station> getJSONFavourites()
-	{// This is based upon the above method. I'm not familiar with JSON objects, so I assume it works. TODO needs testing -Michael
-		try
-		{
-			Path path = Paths.get(FAVOURITESFILENAME);
-			if (!Files.exists(path))
-				return null;
-			String json = new String(Files.readAllBytes(path));
-			if (json.isEmpty())
-				return null;
-			ObjectMapper mapper = new ObjectMapper();
-			JavaType type = mapper.getTypeFactory().constructCollectionType(TreeSet.class, Station.class);
-
 			return mapper.readValue(json, type);
 		}
 		catch (Exception e)

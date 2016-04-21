@@ -14,7 +14,7 @@ public class Testing
 	{
 		long startTime = System.nanoTime();
 		
-		Data data = Data.GetInstance();
+		Data data = new Data();
 		
 		//TreeSet<State> states = data.getStatesBackup();
 		
