@@ -1,10 +1,19 @@
 package main;
 
+import java.awt.EventQueue;
+
 public class Main
 {
-	@SuppressWarnings("unused")
 	public static void main(String[] args)
 	{
-		Controller controller = new Controller();
+		EventQueue.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				@SuppressWarnings("unused")
+				Presenter presenter = new Presenter();
+			}
+		});
 	}
 }

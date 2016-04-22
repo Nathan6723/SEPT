@@ -51,7 +51,7 @@ public class Backup
 		return getStatesBackup(FAVOURITES_FILENAME);
 	}
 	
-	private <T> T getStatesBackup(String filename)
+	private TreeSet<State> getStatesBackup(String filename)
 	{
 		try
 		{
@@ -67,7 +67,6 @@ public class Backup
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
 			return null;
 		}
 	}

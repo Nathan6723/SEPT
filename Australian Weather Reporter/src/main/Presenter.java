@@ -18,11 +18,12 @@ import data.State;
 import data.Station;
 import gui.View;
 
-public class Controller implements ActionListener, TreeSelectionListener
+public class Presenter implements ActionListener, TreeSelectionListener
 {
 	private Data data = new Data();
 	private View view = new View();
 	
+	private int currentMonth;
 	private Station currentStation;
 	private TreePath lastPath;
 	
@@ -30,7 +31,7 @@ public class Controller implements ActionListener, TreeSelectionListener
 			"Evap(mm)", "Sun(hours)", "Dir", "Spd", "Time", "Temp", "RH", "Cld", "Dir", "Spd",
 			"MSLP", "Temp", "RH", "Cld", "Dir", "Spd", "MSLP"};
 	
-	public Controller()
+	public Presenter()
 	{
 		addListeners();
 		showBackupStates();
@@ -43,6 +44,8 @@ public class Controller implements ActionListener, TreeSelectionListener
 		view.getBtnRefresh().addActionListener(this);
 		view.getBtnAddToFavourites().addActionListener(this);
 		view.getBtnRemoveFromFavourites().addActionListener(this);
+		view.getBtnProduceGraph().addActionListener(this);
+		view.getMonthsCombo().addActionListener(this);
 		view.getStatesJTree().addTreeSelectionListener(this);
 		view.getFavouritesJTree().addTreeSelectionListener(this);
 	}
@@ -72,20 +75,34 @@ public class Controller implements ActionListener, TreeSelectionListener
 				view.getBtnRemoveFromFavourites().setVisible(false);
 				view.getBtnAddToFavourites().setVisible(true);
 			}
+			view.getBtnProduceGraph().setVisible(true);
+			view.getMonthsCombo().setVisible(true);
 			Station station = currentStation = data.getStation(data.getStates(), stateName, stationName);
-			ArrayList<ArrayList<String>> table = data.getDWOStationData(station, 0);
-			// Somtimes data isn't available
-			// Need to display a message
-			if (table == null)
+			try
 			{
-				view.getJTable().setModel(new DefaultTableModel());
-				return;
+				updateTable(station, 0);
 			}
-			DefaultTableModel model = new DefaultTableModel(COLUMN_NAMES, 0);
-			for (int i = 0; i < table.size(); ++i)
-				model.addRow(table.get(i).toArray());
-			view.getJTable().setModel(model);
+			catch (Exception ex) {}
 		}
+	}
+	
+	private void updateTable(Station station, int month)
+	{
+		currentMonth = month;
+		ArrayList<ArrayList<String>> table = data.getDWOStationData(station, month);
+		// Somtimes data isn't available
+		// Need to display a message
+		if (table == null)
+		{
+			view.getJTable().setModel(new DefaultTableModel());
+			view.getLblTableOfData().setText("No data available");
+			return;
+		}
+		view.getLblTableOfData().setText(View.WINDOW_LABEL);
+		DefaultTableModel model = new DefaultTableModel(COLUMN_NAMES, month);
+		for (int i = 0; i < table.size(); ++i)
+			model.addRow(table.get(i).toArray());
+		view.getJTable().setModel(model);
 	}
 	
 	private void showBackupStates()
@@ -112,7 +129,7 @@ public class Controller implements ActionListener, TreeSelectionListener
 		for (State state : states)
 		{
 			DefaultMutableTreeNode stateNode = new DefaultMutableTreeNode(state.getName());
-			model.insertNodeInto(stateNode, root, root.getChildCount());
+	        model.insertNodeInto(stateNode, root, root.getChildCount());
 			// Add stations to state nodes
 			for (Station station : state.getStations())
 			{
@@ -133,6 +150,15 @@ public class Controller implements ActionListener, TreeSelectionListener
 			addStationToFavourites();
 		else if (source == view.getBtnRemoveFromFavourites())
 			removeStationFromFavourites();
+		else if (source == view.getBtnProduceGraph())
+			produceGraph();
+		else if (source == view.getMonthsCombo())
+			updateTable(currentStation, view.getMonthsCombo().getSelectedIndex());
+	}
+	
+	private void produceGraph()
+	{
+		
 	}
 	
 	private void addStationToFavourites()
@@ -158,10 +184,14 @@ public class Controller implements ActionListener, TreeSelectionListener
 			state.addStation(station);
 			data.getFavourites().add(state);
 		}
-		data.backupFavourites();
+		// Get all available data for station
+		for (int i = 0; i < 6; ++i)
+			data.getDWOStationData(station, i);
+		// Update favourites list
 		showTree(view.getFavouritesJTree(), data.getFavourites());
 		view.getBtnAddToFavourites().setVisible(false);
 		view.getBtnRemoveFromFavourites().setVisible(true);
+		data.backupFavourites();
 	}
 	
 	private void removeStationFromFavourites()
@@ -170,6 +200,7 @@ public class Controller implements ActionListener, TreeSelectionListener
 			return;
 		String stateName = lastPath.getPathComponent(1).toString();
 		String stationName = lastPath.getPathComponent(2).toString();
+		loops:
 		for (State state : data.getFavourites())
 		{
 			if (state.getName().equals(stateName))
@@ -181,6 +212,7 @@ public class Controller implements ActionListener, TreeSelectionListener
 						state.getStations().remove(station);
 						if (state.getStations().size() == 0)
 							data.getFavourites().remove(state);
+						break loops;
 					}
 				}
 			}
@@ -188,8 +220,10 @@ public class Controller implements ActionListener, TreeSelectionListener
 		showTree(view.getFavouritesJTree(), data.getFavourites());
 		view.getBtnRemoveFromFavourites().setVisible(false);
 		view.getBtnAddToFavourites().setVisible(true);
+		data.backupFavourites();
 	}
 	
+	// Refresh program every 30 minutes
 	private void startRefresh()
 	{
 		new Thread(new Runnable()
@@ -220,7 +254,40 @@ public class Controller implements ActionListener, TreeSelectionListener
 			public void run()
 			{
 				if (!data.isGettingStates())
-					showTree(view.getStatesJTree(), data.getStatesUpdate());
+				{
+					String originalText = view.getBtnRefresh().getText();
+					view.getBtnRefresh().setText("Refreshing...");
+					// Retrieve new state information
+					TreeSet<State> updateStates = data.getStatesUpdate();
+					// Save expanded nodes
+					String expansions = "";
+					for (int i = 0 ; i < view.getStatesJTree().getRowCount(); ++i)
+					{
+				        TreePath path = view.getStatesJTree().getPathForRow(i);
+				        if (view.getStatesJTree().isExpanded(i))
+				        {
+				        	expansions += path.toString();
+				        	expansions += ",";
+				        }
+				    }
+					// Save currently selected row
+					int selectionRow = view.getStatesJTree().getLeadSelectionRow();
+					// Display updated states and stations
+					showTree(view.getStatesJTree(), updateStates);
+					// Restore expanded nodes
+					for (int i = 0; i < view.getStatesJTree().getRowCount(); ++i)
+					{
+				        TreePath path = view.getStatesJTree().getPathForRow(i);
+				        if (expansions.contains(path.toString()))
+				        	view.getStatesJTree().expandRow(i);  
+				    }
+					// Restore currently selected row
+					view.getStatesJTree().setSelectionRow(selectionRow);
+					view.getBtnRefresh().setText(originalText);
+					// Update current station table
+					if (currentStation != null)
+						updateTable(currentStation, currentMonth);
+				}
 			}
 		}).start();
 	}
