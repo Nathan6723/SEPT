@@ -1,8 +1,26 @@
 [ {
-  "name" : "South Australia",
+  "name" : "Northern Territory",
   "latestURL" : null,
   "stations" : [ {
-    "name" : "Cape Jaffa",
+    "name" : "Alice Springs",
+    "latestURL" : null,
+    "latestTables" : [ ],
+    "dwotables" : [ ],
+    "dwourls" : [ ]
+  }, {
+    "name" : "Arltunga",
+    "latestURL" : null,
+    "latestTables" : [ ],
+    "dwotables" : [ ],
+    "dwourls" : [ ]
+  }, {
+    "name" : "Batchelor",
+    "latestURL" : null,
+    "latestTables" : [ ],
+    "dwotables" : [ ],
+    "dwourls" : [ ]
+  }, {
+    "name" : "Borroloola",
     "latestURL" : null,
     "latestTables" : [ ],
     "dwotables" : [ ],

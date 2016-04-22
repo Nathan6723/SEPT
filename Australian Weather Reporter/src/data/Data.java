@@ -57,13 +57,12 @@ public class Data
 	public TreeSet<State> getStatesUpdate()
 	{
 		gettingStates = true;
-		TreeSet<State> updateStates = new TreeSet<>();
-		getDWOStationNames(updateStates);
+		getDWOStationNames(states);
 		//getLatestStationNames();
-		backup.writeStatesBackup(updateStates);
+		backup.writeStatesBackup(states);
 		gettingStates = false;
 		retrieveBackups = false;
-		return states = updateStates;
+		return states;
 	}
 	
 	public TreeSet<State> getStatesBackup()

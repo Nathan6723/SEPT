@@ -163,6 +163,7 @@ public class View
         frame.add(mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(1200, 800));
+        frame.setMinimumSize(new Dimension(800, 600));
         frame.setResizable(false);
         frame.pack();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();

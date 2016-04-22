@@ -21,7 +21,7 @@ import data.Backup;
 import data.Data;
 import data.State;
 import data.Station;
-import gui.DrawGraphWindow;
+import gui.Graph;
 import gui.View;
 
 public class Presenter implements ActionListener, TreeSelectionListener, WindowListener
@@ -33,6 +33,7 @@ public class Presenter implements ActionListener, TreeSelectionListener, WindowL
 	private int currentMonth;
 	private Station currentStation;
 	private TreePath lastPath;
+	private Graph graph;
 	
 	private final static Object[] COLUMN_NAMES = new Object[]{"Day", "Min (°C)", "Max (°C)", "Rain (mm)",
 			"Evap (mm)", "Sun (hours)", "Dir", "Spd (km/h)", "Time (Local)", "Temp (°C)", "RH (%)", "Cld",
@@ -165,9 +166,56 @@ public class Presenter implements ActionListener, TreeSelectionListener, WindowL
 	
 	private void produceGraph()
 	{
-		DrawGraphWindow Graph = new DrawGraphWindow("TestGraph");
-		Graph.pack();
-		Graph.setVisible(true);
+		if (graph != null)
+			graph.dispose();
+		int index = 0;
+		float[] values = new float[12];
+		int[] columns = new int[] {1, 2, 9, 15};
+		DefaultTableModel model = (DefaultTableModel)view.getJTable().getModel();
+		// Calculate maximums
+		for (int column : columns)
+		{
+			float max = -Float.MAX_VALUE;
+			for (int i = 0; i < model.getRowCount(); ++i)
+			{
+				try
+				{
+					max = Math.max(max, Float.parseFloat((String)model.getValueAt(i, column)));
+				}
+				catch (Exception e) {}
+			}
+			values[index++] = max;
+		}
+		// Calculate averages
+		for (int column : columns)
+		{
+			float average = 0;
+			for (int i = 0; i < model.getRowCount(); ++i)
+			{
+				try
+				{
+					average += Float.parseFloat((String)model.getValueAt(i, column));
+				}
+				catch (Exception e) {}
+			}
+			average /= model.getRowCount();
+			values[index++] = average;
+		}
+		// Calculate minimums
+		for (int column : columns)
+		{
+			float min = Float.MAX_VALUE;
+			for (int i = 0; i < model.getRowCount(); ++i)
+			{
+				try
+				{
+					min = Math.min(min, Float.parseFloat((String)model.getValueAt(i, column)));
+				}
+				catch (Exception e) {}
+			}
+			values[index++] = min;
+		}
+		graph = new Graph(currentStation.getName(), values);
 	}
 	
 	private void addStationToFavourites()
