@@ -4,7 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
-public class graphwindow {
+public class Graph {
 
 	private JFrame graph;
 
@@ -15,7 +15,7 @@ public class graphwindow {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					graphwindow window = new graphwindow();
+					Graph window = new Graph();
 					window.graph.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -27,7 +27,7 @@ public class graphwindow {
 	/**
 	 * Create the application.
 	 */
-	public graphwindow() {
+	public Graph() {
 		initialize();
 	}
 

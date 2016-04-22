@@ -1,0 +1,12 @@
+[ {
+  "name" : "South Australia",
+  "latestURL" : null,
+  "stations" : [ {
+    "name" : "Cape Jaffa",
+    "latestURL" : null,
+    "latestTables" : [ ],
+    "dwotables" : [ ],
+    "dwourls" : [ ]
+  } ],
+  "dwourl" : null
+} ]

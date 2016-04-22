@@ -98,8 +98,13 @@ public class Data
 				Calendar calendar = Calendar.getInstance();
 				for (int i = 0; i < 6; ++i)
 				{
-					int month = calendar.get(Calendar.MONTH) + 1;
 					int year = calendar.get(Calendar.YEAR);
+					int month = calendar.get(Calendar.MONTH) + 1 - i;
+					if (month <= 0)
+					{
+						month = 12 + month - 1;
+						year -= 1;
+					}
 					String date = "" + year + (month < 10 ? "0" : "") + month;
 					link = DWOURL + date + "/html/" + id + "." + date + ".shtml";
 					station.addDWOURL(link);
@@ -169,7 +174,7 @@ public class Data
 		}
 		return null;
 	}
-	
+	// Get monthly weather data
 	public ArrayList<ArrayList<String>> getDWOStationData(Station station, int month)
 	{
 		if (retrieveBackups)

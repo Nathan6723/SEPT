@@ -5,9 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -32,6 +30,7 @@ public class View
 	private JTable table = new JTable();
 	private JButton btnProduceGraph;
 	private JLabel lblTableOfData = new JLabel(WINDOW_LABEL);
+	private JFrame frame;
 	
 	public final static String WINDOW_LABEL = "Weather data";
 	public final static String WINDOW_NAME = "Australian Weather Reporter";
@@ -90,7 +89,7 @@ public class View
 		
 		// Scroll pane for the data
 		JScrollPane paneData = new JScrollPane(table);
-		paneData.setPreferredSize(new Dimension(0, 584));
+		paneData.setPreferredSize(new Dimension(0, 588));
 		centerBottomPanel.add(paneData, BorderLayout.NORTH);
 		
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -159,7 +158,7 @@ public class View
 		
 		mainPanel.add(centerPanel, BorderLayout.CENTER);
 
-		JFrame frame = new JFrame();
+		frame = new JFrame();
 		frame.setTitle(WINDOW_NAME);
         frame.add(mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -170,6 +169,11 @@ public class View
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
         frame.setVisible(true);
+	}
+	
+	public JFrame getFrame()
+	{
+		return frame;
 	}
 	
 	public JLabel getLblTableOfData()

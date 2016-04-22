@@ -1,7 +1,11 @@
 package main;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
@@ -13,23 +17,25 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
+import data.Backup;
 import data.Data;
 import data.State;
 import data.Station;
 import gui.View;
 
-public class Presenter implements ActionListener, TreeSelectionListener
+public class Presenter implements ActionListener, TreeSelectionListener, WindowListener
 {
 	private Data data = new Data();
 	private View view = new View();
+	private Backup backup = new Backup();
 	
 	private int currentMonth;
 	private Station currentStation;
 	private TreePath lastPath;
 	
-	private final static Object[] COLUMN_NAMES = new Object[]{"Day", "Min", "Max", "Rain(mm)",
-			"Evap(mm)", "Sun(hours)", "Dir", "Spd", "Time", "Temp", "RH", "Cld", "Dir", "Spd",
-			"MSLP", "Temp", "RH", "Cld", "Dir", "Spd", "MSLP"};
+	private final static Object[] COLUMN_NAMES = new Object[]{"Day", "Min (°C)", "Max (°C)", "Rain (mm)",
+			"Evap (mm)", "Sun (hours)", "Dir", "Spd (km/h)", "Time (Local)", "Temp (°C)", "RH (%)", "Cld",
+			"Dir", "Spd (km/h)", "MSLP (hPa)", "Temp (°C)", "RH (%)", "Cld", "Dir", "Spd (km/h)", "MSLP (hPa"};
 	
 	public Presenter()
 	{
@@ -41,6 +47,7 @@ public class Presenter implements ActionListener, TreeSelectionListener
 	
 	private void addListeners()
 	{
+		view.getFrame().addWindowListener(this);
 		view.getBtnRefresh().addActionListener(this);
 		view.getBtnAddToFavourites().addActionListener(this);
 		view.getBtnRemoveFromFavourites().addActionListener(this);
@@ -64,45 +71,44 @@ public class Presenter implements ActionListener, TreeSelectionListener
 			lastPath = e.getPath();
 			String stateName = e.getPath().getPathComponent(1).toString();
 			String stationName = e.getPath().getPathComponent(2).toString();
-			Station favouriteStation = data.getStation(data.getFavourites(), stateName, stationName);
-			if (favouriteStation != null)
-			{
-				view.getBtnAddToFavourites().setVisible(false);
-				view.getBtnRemoveFromFavourites().setVisible(true);
-			}
-			else
-			{
-				view.getBtnRemoveFromFavourites().setVisible(false);
-				view.getBtnAddToFavourites().setVisible(true);
-			}
-			view.getBtnProduceGraph().setVisible(true);
-			view.getMonthsCombo().setVisible(true);
 			Station station = currentStation = data.getStation(data.getStates(), stateName, stationName);
-			try
+			if (updateTable(station, 0))
 			{
-				updateTable(station, 0);
+				Station favouriteStation = data.getStation(data.getFavourites(), stateName, stationName);
+				if (favouriteStation != null)
+				{
+					view.getBtnAddToFavourites().setVisible(false);
+					view.getBtnRemoveFromFavourites().setVisible(true);
+				}
+				else
+				{
+					view.getBtnRemoveFromFavourites().setVisible(false);
+					view.getBtnAddToFavourites().setVisible(true);
+				}
+				view.getBtnProduceGraph().setVisible(true);
+				view.getMonthsCombo().setVisible(true);
 			}
-			catch (Exception ex) {}
 		}
 	}
 	
-	private void updateTable(Station station, int month)
+	private boolean updateTable(Station station, int month)
 	{
 		currentMonth = month;
-		ArrayList<ArrayList<String>> table = data.getDWOStationData(station, month);
+		ArrayList<ArrayList<String>> rows = data.getDWOStationData(station, month);
 		// Somtimes data isn't available
 		// Need to display a message
-		if (table == null)
+		if (rows == null)
 		{
 			view.getJTable().setModel(new DefaultTableModel());
 			view.getLblTableOfData().setText("No data available");
-			return;
+			return false;
 		}
 		view.getLblTableOfData().setText(View.WINDOW_LABEL);
-		DefaultTableModel model = new DefaultTableModel(COLUMN_NAMES, month);
-		for (int i = 0; i < table.size(); ++i)
-			model.addRow(table.get(i).toArray());
+		DefaultTableModel model = new DefaultTableModel(COLUMN_NAMES, 0);
+		for (int i = 0; i < rows.size(); ++i)
+			model.addRow(rows.get(i).toArray());
 		view.getJTable().setModel(model);
+		return true;
 	}
 	
 	private void showBackupStates()
@@ -185,8 +191,8 @@ public class Presenter implements ActionListener, TreeSelectionListener
 			data.getFavourites().add(state);
 		}
 		// Get all available data for station
-		for (int i = 0; i < 6; ++i)
-			data.getDWOStationData(station, i);
+		for (int i = 1; i < 6; ++i)
+			data.getDWOStationData(data.getStation(data.getStates(), stateName, stationName), i);
 		// Update favourites list
 		showTree(view.getFavouritesJTree(), data.getFavourites());
 		view.getBtnAddToFavourites().setVisible(false);
@@ -290,5 +296,51 @@ public class Presenter implements ActionListener, TreeSelectionListener
 				}
 			}
 		}).start();
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {}
+
+	@Override
+	public void windowClosed(WindowEvent e) {}
+
+	@Override
+	public void windowClosing(WindowEvent e)
+	{
+		String[] prefs = new String[2];
+		prefs[0] = "posX: " + view.getFrame().getLocation().x;
+		prefs[1] = "posY: " + view.getFrame().getLocation().y;
+		backup.writeWindowPrefs(prefs);
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {}
+
+	@Override
+	public void windowIconified(WindowEvent e) {}
+
+	@Override
+	public void windowOpened(WindowEvent e)
+	{
+		String[] prefs = backup.getWindowPrefs();
+		if (prefs != null)
+		{
+			int x = Integer.parseInt(prefs[0]);
+			int y = Integer.parseInt(prefs[1]);
+			// Make sure window isn't off-screen
+			Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+			if (x < 0)
+				x = 0;
+			else if (x > dim.getWidth())
+				x = dim.width;
+			if (y < 0)
+				y = 0;
+			else if (y > dim.getHeight())
+				y = dim.height;
+			view.getFrame().setLocation(x, y);
+		}
 	}
 }
