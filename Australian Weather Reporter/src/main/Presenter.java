@@ -21,6 +21,7 @@ import data.Backup;
 import data.Data;
 import data.State;
 import data.Station;
+import gui.DrawGraphWindow;
 import gui.View;
 
 public class Presenter implements ActionListener, TreeSelectionListener, WindowListener
@@ -164,7 +165,9 @@ public class Presenter implements ActionListener, TreeSelectionListener, WindowL
 	
 	private void produceGraph()
 	{
-		
+		DrawGraphWindow Graph = new DrawGraphWindow("TestGraph");
+		Graph.pack();
+		Graph.setVisible(true);
 	}
 	
 	private void addStationToFavourites()
