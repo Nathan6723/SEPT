@@ -26,7 +26,7 @@ public class Graph extends JFrame
 	    	stationName + " Temperature Graph",           
 			"Measurement",            
 			"Temperature",            
-			createDataset(values), //Probably have to pass data into this constructor, but I'm not sure what          
+			createDataset(values),
 			PlotOrientation.VERTICAL,           
 			true, true, false
 		);
