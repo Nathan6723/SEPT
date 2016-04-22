@@ -334,7 +334,6 @@ public class Presenter implements ActionListener, TreeSelectionListener, WindowL
 			Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 			int frameHeight = view.getFrame().getHeight();
 			int frameWidth = view.getFrame().getWidth();
-			System.out.println(y + " " + frameHeight);
 			if (x < 0)
 				x = 0;
 			else if (x + frameWidth > dim.width)
