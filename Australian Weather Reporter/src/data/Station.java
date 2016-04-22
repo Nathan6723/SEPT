@@ -1,7 +1,6 @@
 package data;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.TreeSet;
 
 public class Station implements Comparable<Station>
@@ -10,14 +9,24 @@ public class Station implements Comparable<Station>
 	private String latestURL;
 	
 	private ArrayList<String> dwoURLs = new ArrayList<>();
-	public TreeSet<Table> DWOTables = new TreeSet<Table>();
-	public TreeSet<Table> LatestTables = new TreeSet<Table>();
+	private TreeSet<Table> dwoTables = new TreeSet<Table>();
+	private TreeSet<Table> latestTables = new TreeSet<Table>();
 	
 	public Station () {}
 	
 	public Station(String name)
 	{
 		this.name = name;
+	}
+	
+	public TreeSet<Table> getDWOTables()
+	{
+		return dwoTables;
+	}
+	
+	public TreeSet<Table> getLatestTables()
+	{
+		return latestTables;
 	}
 	
 	public String getName()

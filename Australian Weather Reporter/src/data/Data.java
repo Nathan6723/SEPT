@@ -19,7 +19,9 @@ public class Data
 	private Backup backup = new Backup();
 	private Scraper scraper = new Scraper();
 	
-	private boolean gettingStates;
+	private boolean gettingStates = false;
+	private boolean retrieveBackups = true;
+	
 	private TreeSet<State> states = new TreeSet<>();
 	private TreeSet<State> favourites = new TreeSet<>();
 	
@@ -55,11 +57,13 @@ public class Data
 	public TreeSet<State> getStatesUpdate()
 	{
 		gettingStates = true;
-		getDWOStationNames();
+		TreeSet<State> updateStates = new TreeSet<>();
+		getDWOStationNames(updateStates);
 		//getLatestStationNames();
-		backup.writeStatesBackup(states);
+		backup.writeStatesBackup(updateStates);
 		gettingStates = false;
-		return states;
+		retrieveBackups = false;
+		return states = updateStates;
 	}
 	
 	public TreeSet<State> getStatesBackup()
@@ -71,7 +75,7 @@ public class Data
 			return states = statesBackup;
 	}
 
-	private void getDWOStationNames()
+	private void getDWOStationNames(TreeSet<State> updateStates)
 	{
 		ArrayList<Element> stateLinks = scraper.getLinksFromTag(DWOURL, "th");
 		for (Element stateLink : stateLinks)
@@ -94,18 +98,23 @@ public class Data
 				Calendar calendar = Calendar.getInstance();
 				for (int i = 0; i < 6; ++i)
 				{
-					int month = calendar.get(Calendar.MONTH) + 1;
 					int year = calendar.get(Calendar.YEAR);
+					int month = calendar.get(Calendar.MONTH) + 1 - i;
+					if (month <= 0)
+					{
+						month = 12 + month - 1;
+						year -= 1;
+					}
 					String date = "" + year + (month < 10 ? "0" : "") + month;
 					link = DWOURL + date + "/html/" + id + "." + date + ".shtml";
 					station.addDWOURL(link);
 				}
 				state.addStation(station);
 			}
-			states.add(state);
+			updateStates.add(state);
 		}
 	}
-	
+	// Currently unused
 	@SuppressWarnings("unused")
 	private void getLatestStationNames()
 	{
@@ -165,12 +174,29 @@ public class Data
 		}
 		return null;
 	}
-	
+	// Get monthly weather data
 	public ArrayList<ArrayList<String>> getDWOStationData(Station station, int month)
 	{
-		return scraper.getTableData(station.getDWOURLs().get(month), 0);
+		if (retrieveBackups)
+		{
+			for (Table table : station.getDWOTables())
+				if (table.getIndex() == month)
+					return table.getRows();
+			return null;
+		}
+		else
+		{
+			ArrayList<ArrayList<String>> rows = scraper.getTableData(station.getDWOURLs().get(month), 0);
+			Table table = new Table(rows);
+			table.setIndex(month);
+			if (station.getDWOTables().contains(table))
+				station.getDWOTables().remove(table);
+			station.getDWOTables().add(table);
+			backup.writeStatesBackup(states);
+			return rows;
+		}
 	}
-	
+	// Currently unused
 	public ArrayList<ArrayList<String>> getLatestStationData(Station station, int day)
 	{
 		return scraper.getTableData(station.getLatestURL(), day+1);

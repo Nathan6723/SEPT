@@ -1,28 +1,11 @@
 [ {
-  "name" : "New South Wales",
+  "name" : "South Australia",
   "latestURL" : null,
   "stations" : [ {
-    "name" : "Armidale",
+    "name" : "Cape Jaffa",
     "latestURL" : null,
-    "DWOTables" : [ ],
-    "LatestTables" : [ ],
-    "dwourls" : [ ]
-  }, {
-    "name" : "Coonamble",
-    "latestURL" : null,
-    "DWOTables" : [ ],
-    "LatestTables" : [ ],
-    "dwourls" : [ ]
-  } ],
-  "dwourl" : null
-}, {
-  "name" : "Tasmania",
-  "latestURL" : null,
-  "stations" : [ {
-    "name" : "Butlers Gorge",
-    "latestURL" : null,
-    "DWOTables" : [ ],
-    "LatestTables" : [ ],
+    "latestTables" : [ ],
+    "dwotables" : [ ],
     "dwourls" : [ ]
   } ],
   "dwourl" : null
